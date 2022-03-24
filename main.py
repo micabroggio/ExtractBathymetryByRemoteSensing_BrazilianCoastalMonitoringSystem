@@ -1,5 +1,5 @@
 
-
+import numpy as np
 import rasterio as rs
 from rasterio.plot import show
 
@@ -13,22 +13,44 @@ class ImageGeo:
     def openImage(self):
         newPath = self.path + "\\" + str(self.nameImage)
         img = rs.open(newPath)
-        return img
+        img = img.read(1)
+        newimg = np.ones((img.shape[0],img.shape[1]))
+        for i in range(len(img)):
+            x = img[i]
+            newimg[i] = x.astype(np.float32)
+        nanind = np.argwhere(newimg == -9999)
+        for i in range(len(nanind)):
+            n = nanind[i]
+            newimg[n[0]][n[1]] = np.nan
+        return newimg
+
+class CalculateProp:
+
+    def __init__(self,B1,B5):
+        self.B1 = B1
+        self.B5 = B5
+
+    def NDWI(self):
+        ima01 = self.B1 - self.B5
+        ima02 = self.B1 + self.B5
+        ndwi = np.divide(ima01,ima02)
+        return ndwi
 
 def main():
     path = "C:\\Users\\Micael Broggio\\OneDrive\\oceanografia\\simcosta\\modcosta\\riogrande_rs_estuario\\batimetria\\imagens_landsat8_oli"
-    name = "LC08_L2SP_221081_20211124_20211201_02_T1_SR_B1.tif"
-    imagemB1 = ImageGeo(path,name)
-    imagemB1 = imagemB1.openImage()
-    imagemB1 = imagemB1.read(1)
+    name = "LC08_L1TP_221081_20211124_20211201_01_T1_sr_band1.tif"
+    B1 = ImageGeo(path,name)
+    B1 = B1.openImage()
 
-    name = "LC08_L2SP_221081_20211124_20211201_02_T1_SR_B5.tif"
-    imagemB5 = ImageGeo(path,name)
-    imagemB5 = imagemB5.openImage()
-    imagemB5 = imagemB5.read(1)
+    name = "LC08_L1TP_221081_20211124_20211201_01_T1_sr_band5.tif"
+    B5 = ImageGeo(path,name)
+    B5 = B5.openImage()
 
-    imagemResult = imagemB1 + imagemB5
-    show(imagemResult)
+    imaRes = CalculateProp(B1,B5)
+    np.seterr(invalid='ignore')
+    imaRes = imaRes.NDWI()
+
+
 
 
 # Press the green button in the gutter to run the script.
