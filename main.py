@@ -4,7 +4,7 @@ import rasterio as rs
 from rasterio.plot import show
 
 
-class ImagyGeo:
+class ImageGeo:
 
     def __init__(self,path,nameImage):
         self.path = path
@@ -18,12 +18,12 @@ class ImagyGeo:
 def main():
     path = "C:\\Users\\Micael Broggio\\OneDrive\\oceanografia\\simcosta\\modcosta\\riogrande_rs_estuario\\batimetria\\imagens_landsat8_oli"
     name = "LC08_L2SP_221081_20211124_20211201_02_T1_SR_B1.tif"
-    imagemB1 = ImagyGeo(path,name)
+    imagemB1 = ImageGeo(path,name)
     imagemB1 = imagemB1.openImage()
     imagemB1 = imagemB1.read(1)
 
     name = "LC08_L2SP_221081_20211124_20211201_02_T1_SR_B5.tif"
-    imagemB5 = ImagyGeo(path,name)
+    imagemB5 = ImageGeo(path,name)
     imagemB5 = imagemB5.openImage()
     imagemB5 = imagemB5.read(1)
 
